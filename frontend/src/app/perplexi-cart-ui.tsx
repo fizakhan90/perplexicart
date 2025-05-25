@@ -1,8 +1,10 @@
 "use client"
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-import { useState, type FormEvent, useEffect } from "react";
 
-// Import Child Components (adjust paths if your components folder is different)
+// Moved useState and useEffect to be after 'use client' and before other imports for convention
+import { useState, useEffect } from "react"; 
+// Removed FormEvent as it's not used directly in this component's handlers now
+
+// Import Child Components
 import AnimatedBackground from "./components/AnimatedBackground";
 import ThemeToggleButton from "./components/ThemeToggleButton";
 import PerplexiCartHeader from "./components/PerplexiCartHeader";
@@ -12,14 +14,10 @@ import ErrorDisplay from "./components/ErrorDisplay";
 import ResultsDisplay from "./components/ResultsDisplay";
 import PerplexiCartFooter from "./components/PerplexiCartFooter";
 
-// Import Types from the central types file
-// Adjust path if your types folder is, e.g., at src/types/ then it would be something like '../../types'
-// For this example, assuming types/index.ts is a sibling to the app folder, or SearchForm is in app/
-// Let's assume `perplexi-cart-ui.tsx` is in `src/app/` and `types` is in `src/`
+// Import Types
 import { type AdviceResponse, type QueryRequest, type PriorityOption } from "../types"; 
 
-// Import Data (priorities array and mockResponse)
-// Assuming data.ts is in the same `src/app/` folder
+// Import Data
 import { priorities, mockResponse } from "./data"; 
 
 export default function PerplexiCartUI() {
@@ -28,9 +26,9 @@ export default function PerplexiCartUI() {
   const [results, setResults] = useState<AdviceResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [showDemoIndicator, setShowDemoIndicator] = useState<boolean>(false); // For demo loading indicator
+  const [showDemoIndicator, setShowDemoIndicator] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-  const [userContext, setUserContext] = useState<string>("");
+  const [userContext, setUserContext] = useState<string>(""); // State for user context
 
   // --- Theme Management ---
   useEffect(() => {
@@ -38,10 +36,9 @@ export default function PerplexiCartUI() {
     if (savedTheme) {
       setIsDarkMode(savedTheme === "dark");
     } else {
-      // Fallback to system preference if no saved theme
       setIsDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches);
     }
-  }, []); // Run only once on mount
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("perplexi-cart-theme", isDarkMode ? "dark" : "light");
@@ -50,14 +47,17 @@ export default function PerplexiCartUI() {
     } else {
       document.documentElement.classList.remove("dark");
     }
-  }, [isDarkMode]); // Run when isDarkMode changes
+  }, [isDarkMode]);
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
   };
 
   // --- API Call Logic (LIVE) ---
-  const handleSearchSubmit = async () => { // No event needed if SearchForm calls this directly
+  const handleSearchSubmit = async () => {
+    // API_BASE_URL accessed here, inside the function that uses it
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
     if (!query.trim()) {
       setError("Please enter what you want to buy.");
       return;
@@ -65,7 +65,7 @@ export default function PerplexiCartUI() {
     setIsLoading(true);
     setError(null);
     setResults(null);
-    setShowDemoIndicator(false); // Ensure demo indicator is off for real search
+    setShowDemoIndicator(false);
 
     const requestBody: QueryRequest = {
       query: query,
@@ -74,7 +74,7 @@ export default function PerplexiCartUI() {
     };
 
     try {
-      const response = await fetch('${API_BASE_URL}/api/get-advice', { // Your FastAPI backend
+      const response = await fetch(`${API_BASE_URL}/api/get-advice`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
@@ -100,9 +100,13 @@ export default function PerplexiCartUI() {
       const data: AdviceResponse = await response.json();
       setResults(data);
 
-    } catch (err: any) {
+    } catch (err) { // Changed from err: any
       console.error('API Call Failed:', err);
-      setError(err.message || 'Failed to fetch advice. Please check the console for more details.');
+      if (err instanceof Error) { // Type check for err
+        setError(err.message || 'Failed to fetch advice. Please check the console for more details.');
+      } else {
+        setError('An unknown error occurred while fetching advice.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -112,8 +116,9 @@ export default function PerplexiCartUI() {
   const handleDemoClick = () => {
     setQuery("gaming laptop under $1000");
     setSelectedPriorityValue("best_value");
-    setShowDemoIndicator(true); // Specifically for demo loading UI
-    setIsLoading(true); // General loading state
+    setUserContext(""); // Reset context for demo if needed
+    setShowDemoIndicator(true);
+    setIsLoading(true);
     setError(null);
     setResults(null);
     setTimeout(() => {
@@ -123,14 +128,15 @@ export default function PerplexiCartUI() {
     }, 1500);
   };
 
-  // Find the full priority object for passing to components that need more than just the value
-  const selectedPriorityFullData = priorities.find((p) => p.value === selectedPriorityValue);
+  // This line uses PriorityOption, so the import is necessary
+  const selectedPriorityFullData: PriorityOption | undefined = priorities.find(
+    (p) => p.value === selectedPriorityValue
+  );
 
   return (
-    // The main div now correctly applies dark mode classes based on isDarkMode state
     <div className={`min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 text-slate-900 dark:text-slate-100 transition-colors`}>
       <ThemeToggleButton isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      <AnimatedBackground /> {/* Contains all background visual elements */}
+      <AnimatedBackground />
       
       <div className="relative z-10 px-4 py-8 sm:px-6 lg:px-8">
         <PerplexiCartHeader />
@@ -139,20 +145,19 @@ export default function PerplexiCartUI() {
           <SearchForm
             query={query}
             setQuery={setQuery}
-            selectedPriority={selectedPriorityValue} // Pass the string value
-            setSelectedPriority={setSelectedPriorityValue} // Pass the setter for the string value
-            priorities={priorities} // Pass the full array of priority options
+            selectedPriority={selectedPriorityValue}
+            setSelectedPriority={setSelectedPriorityValue}
+            priorities={priorities}
             isLoading={isLoading}
-            onSubmit={handleSearchSubmit} // Passed as a callback
-            onDemoClick={handleDemoClick} // Passed as a callback
-            userContext={""} setUserContext={function (value: string): void {
-              throw new Error("Function not implemented.");
-            } }          />
+            onSubmit={handleSearchSubmit}
+            onDemoClick={handleDemoClick}
+            userContext={userContext}       // Pass the state
+            setUserContext={setUserContext} // Pass the state setter
+          />
 
           {error && <ErrorDisplay error={error} />}
           {(isLoading || showDemoIndicator) && <LoadingIndicator />} 
           
-          {/* Only show results if NOT loading AND results exist AND not in demo loading phase */}
           {results && !isLoading && !showDemoIndicator && (
             <ResultsDisplay results={results} selectedPriorityData={selectedPriorityFullData} />
           )}
@@ -161,7 +166,6 @@ export default function PerplexiCartUI() {
         <PerplexiCartFooter />
       </div>
 
-      {/* Global styles for animations (like fadeIn) can remain here or move to globals.css */}
       <style jsx>{`
         .animate-fadeIn {
           animation: fadeIn 0.4s ease-out;
@@ -170,8 +174,6 @@ export default function PerplexiCartUI() {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        /* Any other animations like 'float' or 'gradient' for AnimatedBackground should be
-           defined within AnimatedBackground.tsx or in globals.css if truly global */
       `}</style>
     </div>
   );

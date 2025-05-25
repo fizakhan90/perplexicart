@@ -1,6 +1,6 @@
 // frontend/src/app/data.ts (or frontend/src/data.ts)
 
-import { Star, Leaf, Heart, Shield, type LucideIcon } from 'lucide-react';
+import { Star, Leaf, Heart, Shield } from 'lucide-react';
 import { type AdviceResponse, type PriorityOption } from '../types'; // Adjust path if types is not in ../types
 
 // Define PriorityOption if it's not already in your types/index.ts

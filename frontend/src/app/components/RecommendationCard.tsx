@@ -1,11 +1,10 @@
 // frontend/src/app/components/RecommendationCard.tsx
 import { ExternalLink, CheckCircle, type LucideIcon } from 'lucide-react';
-// Assuming ProductInsight is now part of your central types file
 import { type ProductInsight } from '../../types'; // Adjust path as needed
 
 interface RecommendationCardProps {
   recommendation: ProductInsight;
-  SelectedPriorityIcon?: LucideIcon; // Pass the Icon component directly
+  SelectedPriorityIcon?: LucideIcon; 
 }
 
 export default function RecommendationCard({ recommendation: rec, SelectedPriorityIcon }: RecommendationCardProps) {
@@ -28,7 +27,7 @@ export default function RecommendationCard({ recommendation: rec, SelectedPriori
       {/* Priority Match */}
       <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-slate-200 dark:border-slate-700">
         <div className="flex items-center mb-2">
-          {SelectedPriorityIcon && ( // Render the passed Icon component
+          {SelectedPriorityIcon && ( 
             <SelectedPriorityIcon className="w-4 h-4 text-slate-600 dark:text-slate-400 mr-2" />
           )}
           <span className="font-medium text-slate-900 dark:text-slate-100">
@@ -65,7 +64,7 @@ export default function RecommendationCard({ recommendation: rec, SelectedPriori
 
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4 rounded-2xl">
           <h5 className="font-semibold text-red-700 dark:text-red-300 mb-3 flex items-center">
-            <div className="w-4 h-4 border border-red-500 rounded-full mr-2"></div> {/* Original Cons icon styling */}
+            <div className="w-4 h-4 border border-red-500 rounded-full mr-2"></div>
             Cons
           </h5>
           <ul className="space-y-2">
@@ -98,8 +97,9 @@ export default function RecommendationCard({ recommendation: rec, SelectedPriori
       {rec.user_sentiment_summary && (
         <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl">
           <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">User Sentiment</h5>
+          {/* CORRECTED LINE 102 (Original) */}
           <p className="text-slate-600 dark:text-slate-300 text-sm italic">
-            "{rec.user_sentiment_summary}"
+            {`"${rec.user_sentiment_summary}"`} 
           </p>
         </div>
       )}
@@ -127,8 +127,9 @@ export default function RecommendationCard({ recommendation: rec, SelectedPriori
                   <ExternalLink className="w-3 h-3 ml-1 group-hover:translate-x-0.5 transition-transform duration-200" />
                 </a>
                 {source.snippet && (
+                  // CORRECTED LINE 131 (Original)
                   <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 italic">
-                    "{source.snippet}"
+                    {`"${source.snippet}"`}
                   </p>
                 )}
               </div>

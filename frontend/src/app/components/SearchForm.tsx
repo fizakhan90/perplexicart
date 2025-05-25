@@ -1,8 +1,8 @@
 // frontend/src/app/components/SearchForm.tsx
 "use client";
 
-import { type FormEvent } from "react"; // Keep if your main handler expects it, otherwise remove
-import { Search, ArrowRight, type LucideIcon } from "lucide-react"; // Add ALL icons used here
+//import { type FormEvent } from "react"; // Keep if your main handler expects it, otherwise remove
+import { Search, ArrowRight } from "lucide-react"; // Add ALL icons used here
 import { type PriorityOption } from "../../types"; // Assuming types are in src/types
 // (You might not need to import Star, Leaf etc. here if PriorityOption type includes the icon component directly)
 

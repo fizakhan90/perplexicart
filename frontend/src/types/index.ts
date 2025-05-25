@@ -1,6 +1,7 @@
 // frontend/src/types/index.ts
 
-import { LucideIcon } from "lucide-react";
+import {  LucideProps } from "lucide-react";
+import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export interface Source {
   title?: string | null;
@@ -37,6 +38,6 @@ export interface QueryRequest {
 export interface PriorityOption { // <<<<< ADD THIS
   value: string;
   label: string;
-  icon: LucideIcon;
+  icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;
   description: string;
 }
