@@ -26,7 +26,8 @@ app.add_middleware(
 # --- Pydantic Models ---
 class QueryRequest(BaseModel): 
     query: str
-    priority: str # e.g., "best_value", "eco_friendly"
+    priority: str
+    user_context: str | None = None # e.g., "best_value", "eco_friendly"
 
 class Source(BaseModel):
     title: str | None = None
@@ -55,24 +56,39 @@ class AdviceResponse(BaseModel):
 PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions"
 
 # --- Perplexity API Call Logic ---
-async def call_perplexity_api(user_query: str, user_priority: str, api_key: str) -> AdviceResponse | None:
+async def call_perplexity_api(user_query: str, user_priority: str, api_key: str, user_context_from_request: str | None = None ) -> AdviceResponse | None:
     system_prompt = (
-        "You are an expert shopping advisor named BuyWise. Your goal is to help users make smarter, "
-        "value-aligned purchases. The user will provide a query and a priority (e.g., best_value, "
-        "eco_friendly, ethical_brands, long-term_durability). Your response MUST be a JSON object "
-        "that strictly adheres to the provided JSON schema. Provide 1 to 3 top recommendations. "
-        "For each recommendation, detail its pros, cons, key specifications relevant to the query, "
-        "and specifically analyze how it matches the user's stated priority, including any tradeoffs. "
-        "If possible, include an estimated price range and a summary of user sentiment from online sources. "
-        "Crucially, for all factual claims, pros, cons, sentiments, and priority alignments, "
-        "provide specific cited_sources with a title, URL, and a relevant snippet from the source. "
-        "Be comprehensive and objective."
+        "You are an expert shopping advisor named PerplexiCart. Your primary goal is to help users make "
+        "smarter, value-aligned purchases based on their query, chosen priority, AND any specific user context "
+        "they provide (such as skin type, specific concerns, location, budget details, etc.). "
+        "Your response MUST be a JSON object adhering strictly to the provided JSON schema. "
+        "For each recommendation, you MUST analyze how it aligns with BOTH the user's priority AND their "
+        "specific context. Highlight pros, cons, or user sentiments that are particularly relevant to this context. "
+        "For example, if the user mentions oily skin, focus on how suitable the product is for oily skin. "
+        "When researching, actively seek out and synthesize user experiences and discussions from community forums "
+        "like Reddit (e.g., relevant subreddits like r/IndianSkincareAddicts, r/VeganBeauty, or product-specific subreddits) "
+        "and Q&A platforms like Quora. "
+        "In the 'user_sentiment_summary' field for each product, incorporate a summary of what real users are discussing on these forums, "
+        "especially if their experiences relate to the user's query, priority, or provided context. "
+        "If you find highly relevant and informative forum threads or Quora answers, include them in 'cited_sources'. "
+        "If a specific, concise quote or commonly expressed sentiment from a forum vividly illustrates a key pro/con or is "
+        "highly relevant to the user's context, you may include a paraphrased version or short direct quote within the "
+        "'user_sentiment_summary', or as a pro/con, clearly noting its anecdotal origin (e.g., 'Many Reddit users report...'). "
+        "Always cite your sources for key claims and product information."
     )
 
+    context_details_for_prompt = ""
+    if user_context_from_request: # Check if context was provided
+        context_details_for_prompt = f" My specific needs and context are: {user_context_from_request}."
+
     user_content = (
-        f"I am looking for advice on purchasing: '{user_query}'. "
-        f"My primary priority is '{user_priority}'. "
-        f"Please provide your expert advice structured according to the JSON schema."
+        f"I'm looking for advice on: '{user_query}'. "
+        f"My main priority is '{user_priority}'.{context_details_for_prompt} " # Append collected context
+        f"Please provide detailed recommendations in the specified JSON format. "
+        f"Ensure your analysis (especially reasoning_summary, value_alignment_details, pros, cons, and user_sentiment_summary) "
+        f"directly addresses how each product fits my stated priority AND my specific context details. "
+        f"Please enrich your analysis with insights from user discussions on forums like Reddit and Quora, focusing on experiences "
+        f"that align with my query, priority, and any specific context I've provided. I'm interested in what real users are saying."
     )
 
     json_schema_for_perplexity = {"schema": AdviceResponse.model_json_schema()}
@@ -144,16 +160,17 @@ async def read_root():
 async def get_advice(request: QueryRequest): # QueryRequest is now defined
     user_query = request.query
     user_priority = request.priority
+    user_context = request.user_context
     perplexity_api_key = os.getenv("PERPLEXITY_API_KEY")
 
     if not perplexity_api_key:
         print("ERROR: PERPLEXITY_API_KEY not found in environment variables.")
         raise HTTPException(status_code=500, detail="API Key for Perplexity not configured on the server.")
 
-    print(f"Received query: '{user_query}', Priority: '{user_priority}'")
+    print(f"Received query: '{user_query}', Priority: '{user_priority}'Context: '{user_context}'")
 
     try:
-        advice_response = await call_perplexity_api(user_query, user_priority, perplexity_api_key)
+        advice_response = await call_perplexity_api(user_query, user_priority, perplexity_api_key,    user_context_from_request=user_context )
 
         return advice_response
     except HTTPException:
