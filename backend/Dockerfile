@@ -4,7 +4,15 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 COPY . .
+
+# Copy the entrypoint script and make it executable
+COPY entrypoint.sh .
+RUN chmod +x ./entrypoint.sh 
+
+# EXPOSE the default port your script will use if PORT isn't set,
+# or the port Render expects. Render will map this.
 EXPOSE 8000 
-# The PORT environment variable will be set by Render. 
-# We use a default if it's not set (e.g., for local Docker runs).
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${PORT:-8000}"]
+
+# Run the entrypoint script
+ENTRYPOINT ["./entrypoint.sh"]
+# CMD can be used to pass default arguments to ENTRYPOINT if needed, but not necessary here
