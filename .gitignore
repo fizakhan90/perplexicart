@@ -1,0 +1,36 @@
+# Environment Variables
+.env
+*.env
+.env.*
+!/.env.example # If you have an example env file you DO want to commit
+
+# Python / Backend
+backend/venv/
+backend/.venv/
+backend/env/
+backend/ENV/
+**/__pycache__/
+**/*.pyc
+*.log
+instance/ # Common for Flask
+
+# Node.js / Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/ # For CRA or other build outputs
+frontend/.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp.* # Yarn PnP
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Operating System files
+Thumbs.db
