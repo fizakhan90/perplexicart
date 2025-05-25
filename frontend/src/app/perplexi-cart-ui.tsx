@@ -1,5 +1,5 @@
 "use client"
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 import { useState, type FormEvent, useEffect } from "react";
 
 // Import Child Components (adjust paths if your components folder is different)
@@ -74,7 +74,7 @@ export default function PerplexiCartUI() {
     };
 
     try {
-      const response = await fetch('http://localhost:8000/api/get-advice', { // Your FastAPI backend
+      const response = await fetch('${API_BASE_URL}/api/get-advice', { // Your FastAPI backend
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(requestBody),
