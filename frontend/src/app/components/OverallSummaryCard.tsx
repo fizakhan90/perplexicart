@@ -1,11 +1,9 @@
-// frontend/src/app/components/OverallSummaryCard.tsx
-
 interface OverallSummaryCardProps {
-  summary?: string; // Make it optional as in AdviceResponse
+  summary?: string; 
 }
 
 export default function OverallSummaryCard({ summary }: OverallSummaryCardProps) {
-  if (!summary) return null; // Don't render if no summary
+  if (!summary) return null; 
 
   return (
     <div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700/50 rounded-3xl p-6">

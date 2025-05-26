@@ -1,5 +1,4 @@
-// frontend/src/app/components/ThemeToggleButton.tsx
-'use client'; // Uses onClick
+'use client'; 
 import { Sun, Moon } from 'lucide-react';
 
 interface ThemeToggleButtonProps {

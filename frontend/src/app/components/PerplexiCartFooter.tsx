@@ -1,4 +1,3 @@
-// frontend/src/app/components/PerplexiCartFooter.tsx
 import { Zap } from 'lucide-react';
 
 export default function PerplexiCartFooter() {

@@ -14,10 +14,9 @@ import ErrorDisplay from "./components/ErrorDisplay";
 import ResultsDisplay from "./components/ResultsDisplay";
 import PerplexiCartFooter from "./components/PerplexiCartFooter";
 
-// Import Types
 import { type AdviceResponse, type QueryRequest, type PriorityOption } from "../types"; 
 
-// Import Data
+
 import { priorities, mockResponse } from "./data"; 
 
 export default function PerplexiCartUI() {
@@ -28,9 +27,9 @@ export default function PerplexiCartUI() {
   const [error, setError] = useState<string | null>(null);
   const [showDemoIndicator, setShowDemoIndicator] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-  const [userContext, setUserContext] = useState<string>(""); // State for user context
+  const [userContext, setUserContext] = useState<string>(""); 
 
-  // --- Theme Management ---
+  
   useEffect(() => {
     const savedTheme = localStorage.getItem("perplexi-cart-theme");
     if (savedTheme) {
@@ -53,9 +52,9 @@ export default function PerplexiCartUI() {
     setIsDarkMode(!isDarkMode);
   };
 
-  // --- API Call Logic (LIVE) ---
+  
   const handleSearchSubmit = async () => {
-    // API_BASE_URL accessed here, inside the function that uses it
+
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
     if (!query.trim()) {
@@ -100,9 +99,9 @@ export default function PerplexiCartUI() {
       const data: AdviceResponse = await response.json();
       setResults(data);
 
-    } catch (err) { // Changed from err: any
+    } catch (err) { 
       console.error('API Call Failed:', err);
-      if (err instanceof Error) { // Type check for err
+      if (err instanceof Error) { 
         setError(err.message || 'Failed to fetch advice. Please check the console for more details.');
       } else {
         setError('An unknown error occurred while fetching advice.');
@@ -112,11 +111,11 @@ export default function PerplexiCartUI() {
     }
   };
 
-  // --- Demo Logic ---
+  
   const handleDemoClick = () => {
     setQuery("gaming laptop under $1000");
     setSelectedPriorityValue("best_value");
-    setUserContext(""); // Reset context for demo if needed
+    setUserContext(""); 
     setShowDemoIndicator(true);
     setIsLoading(true);
     setError(null);
@@ -128,7 +127,7 @@ export default function PerplexiCartUI() {
     }, 1500);
   };
 
-  // This line uses PriorityOption, so the import is necessary
+
   const selectedPriorityFullData: PriorityOption | undefined = priorities.find(
     (p) => p.value === selectedPriorityValue
   );
@@ -151,8 +150,8 @@ export default function PerplexiCartUI() {
             isLoading={isLoading}
             onSubmit={handleSearchSubmit}
             onDemoClick={handleDemoClick}
-            userContext={userContext}       // Pass the state
-            setUserContext={setUserContext} // Pass the state setter
+            userContext={userContext}       
+            setUserContext={setUserContext} 
           />
 
           {error && <ErrorDisplay error={error} />}

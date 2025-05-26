@@ -1,4 +1,3 @@
-// frontend/src/app/components/PerplexiCartHeader.tsx
 import { ShoppingCart, TrendingUp, Award, CheckCircle } from 'lucide-react';
 
 export default function PerplexiCartHeader() {

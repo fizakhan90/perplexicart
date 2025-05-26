@@ -1,7 +1,3 @@
-// frontend/src/app/components/LoadingIndicator.tsx
-// No props needed if this is the only loading state.
-// If you had different loading messages, you might pass them as props.
-
 export default function LoadingIndicator() {
   return (
     <div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200 dark:border-slate-700/50 rounded-3xl p-8 mb-8">

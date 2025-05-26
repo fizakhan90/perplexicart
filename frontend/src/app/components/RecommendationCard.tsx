@@ -1,6 +1,5 @@
-// frontend/src/app/components/RecommendationCard.tsx
 import { ExternalLink, CheckCircle, type LucideIcon } from 'lucide-react';
-import { type ProductInsight } from '../../types'; // Adjust path as needed
+import { type ProductInsight } from '../../types'; 
 
 interface RecommendationCardProps {
   recommendation: ProductInsight;
@@ -97,7 +96,6 @@ export default function RecommendationCard({ recommendation: rec, SelectedPriori
       {rec.user_sentiment_summary && (
         <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl">
           <h5 className="font-semibold text-blue-700 dark:text-blue-300 mb-2">User Sentiment</h5>
-          {/* CORRECTED LINE 102 (Original) */}
           <p className="text-slate-600 dark:text-slate-300 text-sm italic">
             {`"${rec.user_sentiment_summary}"`} 
           </p>
@@ -127,7 +125,6 @@ export default function RecommendationCard({ recommendation: rec, SelectedPriori
                   <ExternalLink className="w-3 h-3 ml-1 group-hover:translate-x-0.5 transition-transform duration-200" />
                 </a>
                 {source.snippet && (
-                  // CORRECTED LINE 131 (Original)
                   <p className="text-slate-500 dark:text-slate-400 text-xs mt-1 italic">
                     {`"${source.snippet}"`}
                   </p>

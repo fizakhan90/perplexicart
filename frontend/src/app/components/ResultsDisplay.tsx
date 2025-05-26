@@ -1,14 +1,13 @@
-// frontend/src/app/components/ResultsDisplay.tsx
-import { Star as StarIcon } from 'lucide-react'; // Renamed Star to avoid conflict if needed
+import { Star as StarIcon } from 'lucide-react';
 import OverallSummaryCard from './OverallSummaryCard';
 import RecommendationCard from './RecommendationCard';
 import TradeoffsCard from './TradeoffsCard';
 import GeneralTipsCard from './GeneralTipsCard';
-import { type AdviceResponse, type PriorityOption } from '../../types'; // Adjust path as needed
+import { type AdviceResponse, type PriorityOption } from '../../types'; 
 
 interface ResultsDisplayProps {
   results: AdviceResponse;
-  selectedPriorityData?: PriorityOption; // This contains the icon for the selected priority
+  selectedPriorityData?: PriorityOption; 
 }
 
 
@@ -27,7 +26,7 @@ export default function ResultsDisplay({ results, selectedPriorityData }: Result
             <RecommendationCard
               key={index}
               recommendation={rec}
-              SelectedPriorityIcon={selectedPriorityData?.icon} // Pass the icon component
+              SelectedPriorityIcon={selectedPriorityData?.icon} 
             />
           ))}
         </div>

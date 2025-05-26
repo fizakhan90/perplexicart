@@ -1,5 +1,3 @@
-// frontend/src/types/index.ts
-
 import {  LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -16,7 +14,7 @@ export interface ProductInsight {
   pros: string[];
   cons: string[];
   priority_match_analysis: string;
-  key_specifications?: Record<string, string> | null; // dict[str, str] becomes Record<string, string>
+  key_specifications?: Record<string, string> | null; 
   estimated_price_range?: string | null;
   user_sentiment_summary?: string | null;
   cited_sources: Source[];
@@ -35,7 +33,7 @@ export interface QueryRequest {
   user_context?: string | null;
 }
 
-export interface PriorityOption { // <<<<< ADD THIS
+export interface PriorityOption { 
   value: string;
   label: string;
   icon: ForwardRefExoticComponent<Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>>;

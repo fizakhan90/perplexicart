@@ -1,7 +1,5 @@
-// frontend/src/app/components/TradeoffsCard.tsx
-
 interface TradeoffsCardProps {
-    tradeoffs?: string | null; // Make optional as in AdviceResponse
+    tradeoffs?: string | null; 
 }
 
 export default function TradeoffsCard({ tradeoffs }: TradeoffsCardProps) {

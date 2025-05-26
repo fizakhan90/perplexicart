@@ -4,29 +4,23 @@ from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
 import requests
-import json # For logging payloads and potential decode errors
+import json
 
-load_dotenv() # Make sure this is called to load your .env file
+load_dotenv() 
 
 app = FastAPI()
-
-# ---CORS Middleware ---
-# For hackathon, allow_origins=["*"] is simple and works.
-# For more control in production, use an environment variable for your frontend URL.
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000") # Default for local dev
-# Add your specific Vercel deployment URL here if you want to be more restrictive
-# than "*" for allow_origins. For the hackathon, "*" is fine.
-deployed_frontend_url = "https://perplexicart-kldqbbzuh-fizakhan90s-projects.vercel.app" # Your Vercel URL
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+deployed_frontend_url = "https://perplexicart-kldqbbzuh-fizakhan90s-projects.vercel.app"
 
 origins_list = [
     "http://localhost:3000",
-    "localhost:3000", # Sometimes needed
+    "localhost:3000", 
     deployed_frontend_url
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins_list, # Or ["*"] for simplicity during hackathon
+    allow_origins=origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -54,18 +48,15 @@ class ProductInsight(BaseModel):
     estimated_price_range: str | None = None
     user_sentiment_summary: str | None = None
     cited_sources: list[Source]
-    # Optional: made_in_india_details: str | None = None # If you add this for Made in India
-
+    
 class AdviceResponse(BaseModel):
     recommendations: list[ProductInsight]
     overall_search_summary: str
     tradeoffs_explained: str | None = None
     general_tips: list[str] | None = None
 
-# --- Perplexity API Configuration ---
+
 PERPLEXITY_API_URL = "https://api.perplexity.ai/chat/completions"
-# Use an environment variable for the model, defaulting to a known good one.
-# CHECK PERPLEXITY DOCS FOR LATEST RECOMMENDED ONLINE MODELS FOR STRUCTURED OUTPUT
 PERPLEXITY_MODEL = os.getenv("PERPLEXITY_MODEL", "sonar") 
 
 
@@ -106,8 +97,6 @@ async def call_perplexity_api(
             "You MUST actively search for and prioritize products that are verifiably manufactured, assembled, or primarily sourced within India. "
             "Look for definitive information on product descriptions, brand websites (e.g., 'About Us' pages, manufacturing details), 'Country of Origin' labels on e-commerce sites (like Amazon.in, Flipkart), and articles discussing Indian manufacturing for this product category. "
             "For each recommended product, in the 'priority_match_analysis' field, explicitly state how the product meets (or doesn't fully meet) the 'Made in India' criterion. Cite your specific sources for this 'Made in India' claim. "
-            # If you add 'made_in_india_details' to ProductInsight Pydantic model, instruct to fill it:
-            # "Also, populate the 'made_in_india_details' field with your findings regarding its country of origin and manufacturing, citing sources for this specific information. "
             "If definitive 'Made in India' information is hard to find for a product but other factors (e.g., an Indian brand headquarters known for local production, explicit marketing as 'Make in India') suggest a strong likelihood, state this nuance. "
             "If a product is from an international brand but has significant manufacturing operations in India for the Indian market, that can also be considered. "
             "Be skeptical of vague claims and prioritize products with clear 'Made in India' indicators."
@@ -144,7 +133,7 @@ async def call_perplexity_api(
             "type": "json_schema",
             "json_schema": json_schema_for_perplexity,
         },
-        "temperature": 0.7 # Example temperature, adjust as needed
+        "temperature": 0.7 
     }
 
     headers = {
@@ -154,18 +143,13 @@ async def call_perplexity_api(
     }
 
     try:
-        # print(f"--- Sending Payload to Perplexity for query: '{user_query}' ---")
-        # print(json.dumps(payload, indent=2)) # Useful for debugging prompts
+       
         response = requests.post(PERPLEXITY_API_URL, headers=headers, json=payload, timeout=90)
-        response.raise_for_status() # Raises HTTPError for bad responses (4XX or 5XX)
-
+        response.raise_for_status() 
         response_data = response.json()
-        # print(f"--- Received Raw Response from Perplexity ---")
-        # print(json.dumps(response_data, indent=2)) # Useful for debugging raw AI output
-
+        
         json_string_from_perplexity = response_data["choices"][0]["message"]["content"]
-        # print(f"--- JSON String from Perplexity (to be parsed) ---")
-        # print(json_string_from_perplexity)
+  
         
         parsed_advice = AdviceResponse.model_validate_json(json_string_from_perplexity)
         return parsed_advice
@@ -195,7 +179,7 @@ async def call_perplexity_api(
         print(f"ERROR: An unexpected error occurred in call_perplexity_api for query: '{user_query}'. Error: {e}")
         raise HTTPException(status_code=500, detail=f"An unexpected server error occurred: {str(e)}")
     
-    return None # Should ideally not be reached
+    return None 
 
 # --- API Endpoints ---
 @app.get("/")
@@ -230,13 +214,9 @@ async def get_advice(request: QueryRequest):
         return advice_response
         
     except HTTPException:
-        # This will re-raise HTTPExceptions that were already created and logged in call_perplexity_api
+      
         raise 
-    except Exception as e: # Catch any other non-HTTPException errors from this endpoint level
+    except Exception as e: 
         print(f"ERROR: Unexpected error in get_advice endpoint for query: '{user_query}'. Error: {e}")
         raise HTTPException(status_code=500, detail=f"An unexpected internal server error occurred: {str(e)}")
 
-# To run locally (optional):
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)

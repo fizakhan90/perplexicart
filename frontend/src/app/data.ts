@@ -1,17 +1,7 @@
-// frontend/src/app/data.ts (or frontend/src/data.ts)
-
 import { Star, Leaf, Heart, Shield , MapPin } from 'lucide-react';
-import { type AdviceResponse, type PriorityOption } from '../types'; // Adjust path if types is not in ../types
+import { type AdviceResponse, type PriorityOption } from '../types'; 
 
-// Define PriorityOption if it's not already in your types/index.ts
-// If it IS in types/index.ts, you don't need to redefine it here, just import it.
-// For clarity, if it's not in types/index.ts, it could be:
-// export interface PriorityOption {
-//   value: string;
-//   label: string;
-//   icon: LucideIcon;
-//   description: string;
-// }
+
 
 export const priorities: PriorityOption[] = [
   {
@@ -38,10 +28,10 @@ export const priorities: PriorityOption[] = [
     icon: Shield,
     description: "Built to last with quality materials",
   },
-  { // New Priority
+  { 
     value: "made_in_india",
     label: "Made in India",
-    icon: MapPin, // Using MapPin as an example
+    icon: MapPin,
     description: "Products manufactured or assembled in India",
   },
 ];
@@ -92,7 +82,7 @@ export const mockResponse: AdviceResponse = {
         },
       ],
     },
-    // You could add another mock recommendation if you want
+    
   ],
   tradeoffs_explained:
     "MOCK DATA: While the ASUS TUF offers the best overall value, you'll sacrifice some display quality and portability. If color accuracy is crucial for content creation, consider spending slightly more for an upgraded display model.",

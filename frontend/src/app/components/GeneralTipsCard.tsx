@@ -1,8 +1,7 @@
-// frontend/src/app/components/GeneralTipsCard.tsx
 import { Sparkles } from 'lucide-react';
 
 interface GeneralTipsCardProps {
-  tips?: string[] | null; // <<<< Ensure it matches AdviceResponse
+  tips?: string[] | null; 
 }
 
 export default function GeneralTipsCard({ tips }: GeneralTipsCardProps) {
