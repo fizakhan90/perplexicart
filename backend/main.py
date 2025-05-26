@@ -13,7 +13,8 @@ app = FastAPI()
 # ---CORS Middleware ---
 origins = [
     "http://localhost:3000", # Default Next.js dev port
-    "localhost:3000"
+    "localhost:3000",
+    "https://perplexicart-kldqbbzuh-fizakhan90s-projects.vercel.app"
 ]
 app.add_middleware(
     CORSMiddleware,
