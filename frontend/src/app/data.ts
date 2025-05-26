@@ -1,6 +1,6 @@
 // frontend/src/app/data.ts (or frontend/src/data.ts)
 
-import { Star, Leaf, Heart, Shield } from 'lucide-react';
+import { Star, Leaf, Heart, Shield , MapPin } from 'lucide-react';
 import { type AdviceResponse, type PriorityOption } from '../types'; // Adjust path if types is not in ../types
 
 // Define PriorityOption if it's not already in your types/index.ts
@@ -37,6 +37,12 @@ export const priorities: PriorityOption[] = [
     label: "Durability",
     icon: Shield,
     description: "Built to last with quality materials",
+  },
+  { // New Priority
+    value: "made_in_india",
+    label: "Made in India",
+    icon: MapPin, // Using MapPin as an example
+    description: "Products manufactured or assembled in India",
   },
 ];
 
