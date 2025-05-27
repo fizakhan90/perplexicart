@@ -1,12 +1,8 @@
 "use client"
 
-// Moved useState and useEffect to be after 'use client' and before other imports for convention
-import { useState, useEffect } from "react"; 
-// Removed FormEvent as it's not used directly in this component's handlers now
+import { useState } from "react"; 
 
-// Import Child Components
 import AnimatedBackground from "./components/AnimatedBackground";
-import ThemeToggleButton from "./components/ThemeToggleButton";
 import PerplexiCartHeader from "./components/PerplexiCartHeader";
 import SearchForm from "./components/SearchForm";
 import LoadingIndicator from "./components/LoadingIndicator";
@@ -26,33 +22,11 @@ export default function PerplexiCartUI() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [showDemoIndicator, setShowDemoIndicator] = useState<boolean>(false);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const [userContext, setUserContext] = useState<string>(""); 
 
   
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("perplexi-cart-theme");
-    if (savedTheme) {
-      setIsDarkMode(savedTheme === "dark");
-    } else {
-      setIsDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches);
-    }
-  }, []);
 
-  useEffect(() => {
-    localStorage.setItem("perplexi-cart-theme", isDarkMode ? "dark" : "light");
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkMode]);
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
-  
   const handleSearchSubmit = async () => {
 
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
@@ -134,7 +108,6 @@ export default function PerplexiCartUI() {
 
   return (
     <div className={`min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 text-slate-900 dark:text-slate-100 transition-colors`}>
-      <ThemeToggleButton isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <AnimatedBackground />
       
       <div className="relative z-10 px-4 py-8 sm:px-6 lg:px-8">
